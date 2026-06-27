@@ -1,0 +1,42 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment Variables
+.env
+
+# Application Secrets
+application-local.properties
+application-prod.properties
+
+# Java
+*.class
+
+# Temporary Files
+*.tmp
+*.swp
