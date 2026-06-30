@@ -40,3 +40,6 @@ application-prod.properties
 # Temporary Files
 *.tmp
 *.swp
+
+#Virtual Environment
+.venv
