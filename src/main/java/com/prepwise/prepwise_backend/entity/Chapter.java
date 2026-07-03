@@ -35,20 +35,23 @@ public class Chapter {
 
 
     @Column(name="chapter_name", nullable = false)
-    private String chapter_name;
+    private String chapterName;
 
     @ManyToOne
-    @JoinColumn(name = "module_id", nullable = false)
-    private Module module;
+    @JoinColumn(name = "unit_id", nullable = false)
+    private Unit unit;
 
     @Column(name="description")
     private String description;
 
     @Column(name="displayOrder")
-    private int displayOrder;
+    private Integer displayOrder;
     @Column(name="weightage")
-    private int weightage;
+    private Integer weightage;
 
+    @Column(name="estimatedQuestions")
+    private Integer estimatedQuestions;
+    
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User user;;

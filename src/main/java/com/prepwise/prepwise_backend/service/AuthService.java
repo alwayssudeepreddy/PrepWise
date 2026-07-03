@@ -32,7 +32,7 @@ public class AuthService {
     if (userRepository.existsByEmail(request.getEmail())) {
         throw new RuntimeException("Email already exists");
     }
-
+    System.out.print(request);
     User user = User.builder()
             .username(request.getUsername())
             .fullName(request.getFullName())

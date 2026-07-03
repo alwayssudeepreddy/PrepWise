@@ -131,4 +131,4 @@ Ensure you have the following installed on your local machine:
 PrepWise aims to become an intelligent study companion for KCET students by combining structured practice, analytics, and AI-driven recommendations. The platform will continuously adapt to each student's learning journey and provide personalized guidance for better exam preparation.
 
 ---
-*Made with ❤️ for KCET Aspirants.*
+*Made for KCET Aspirants.*

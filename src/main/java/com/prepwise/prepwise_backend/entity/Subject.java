@@ -43,7 +43,8 @@ public class Subject {
     private String description;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
-    private List<Module> modules = new ArrayList<>();
+    @Builder.Default
+    private List<Unit> modules = new ArrayList<>();
 
     
 

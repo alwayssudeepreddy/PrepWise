@@ -23,30 +23,36 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.CascadeType;
 
-
+@Entity
+@Table(name = "units")
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name="modules")
-public class Module {
+@AllArgsConstructor
+public class Unit {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long moduleId;
-    
+    private Long unitId;
 
+    @Column(name = "unit_name", nullable = false)
+    private String unitName;
 
-    @Column(name="module_name", nullable = false)
-    private String module_name;
+    @Column(name = "description")
+    private String description;
 
-    
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    
+    @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Chapter> chapters = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User user;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -55,16 +61,4 @@ public class Module {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
-    private List<Chapter> chapters = new ArrayList<>();
-    
-    @ManyToOne
-    @JoinColumn(name = "created_by", nullable = false)
-    private User user;
-    
-
-
-
 }
-

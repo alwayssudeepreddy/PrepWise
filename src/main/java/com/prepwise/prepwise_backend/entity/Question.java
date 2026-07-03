@@ -45,7 +45,7 @@ public class Question {
     private String optionD;
 
     @Column(name = "correct_option", nullable = false)
-    private char correctOption;
+    private Character correctOption;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "difficulty", nullable = false)
@@ -56,6 +56,9 @@ public class Question {
 
     @Column(name = "year_asked")
     private Integer yearAsked;
+
+    @Column(name = "priority")
+    private Integer priority;
 
     @Column(name = "source")
     private String source;

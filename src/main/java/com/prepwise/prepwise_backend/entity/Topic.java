@@ -35,13 +35,16 @@ public class Topic
 
 
     @Column(name="topic_name", nullable = false)
-    private String topic_name;
+    private String topicName;
 
     @Column(name="desciption")
     private String desciption;
 
     @Column(name="displayorder")
-     private int displayorder;
+     private Integer displayorder;
+
+    @Column(name="weightage")
+    private Integer weightage;
 
      @ManyToOne
      @JoinColumn(name="chapter_id",nullable=false)

@@ -27,7 +27,7 @@ public class SubjectService {
                 .build();
 
         Subject saved = subjectRepo.save(subject);
-
+       System.out.println(saved);
         return SubjectResponse.builder()
                 .subjectId(saved.getSubjectId())
                 .subjectName(saved.getSubjectName())

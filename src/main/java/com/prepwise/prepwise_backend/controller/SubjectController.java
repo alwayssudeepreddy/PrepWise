@@ -23,31 +23,27 @@ public class SubjectController {
     @Autowired
     private SubjectService subjectService;
 
-   
     @GetMapping
     public List<SubjectResponse> getAllSubjects() {
         return subjectService.getAllSubjects();
     }
 
-    
     @GetMapping("/{id}")
     public SubjectResponse getSubjectById(@PathVariable Long id) {
         return subjectService.getSubjectById(id);
     }
 
-    
     @PostMapping
     public SubjectResponse addSubject(@RequestBody SubjectRequest request) {
+
         return subjectService.addSubject(request);
     }
 
-   
     @PutMapping("/{id}")
-    public SubjectResponse updateSubject(@PathVariable Long id,@RequestBody SubjectRequest request) {
+    public SubjectResponse updateSubject(@PathVariable Long id, @RequestBody SubjectRequest request) {
         return subjectService.updateSubject(id, request);
     }
 
-    
     @DeleteMapping("/{id}")
     public void deleteSubject(@PathVariable Long id) {
         subjectService.deleteSubject(id);
