@@ -37,11 +37,11 @@ public class Topic
     @Column(name="topic_name", nullable = false)
     private String topicName;
 
-    @Column(name="desciption")
-    private String desciption;
+    @Column(name="description")
+    private String description;
 
-    @Column(name="displayorder")
-     private Integer displayorder;
+    @Column(name="displayOrder")
+     private Integer displayOrder;
 
     @Column(name="weightage")
     private Integer weightage;
@@ -52,7 +52,7 @@ public class Topic
      
      @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
-    private User user;;
+    private User user;
 
     
 

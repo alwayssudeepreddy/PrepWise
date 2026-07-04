@@ -4,13 +4,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prepwise.prepwise_backend.dto.subject.SubjectRequest;
 import com.prepwise.prepwise_backend.dto.subject.SubjectResponse;
 import com.prepwise.prepwise_backend.entity.Subject;
+import com.prepwise.prepwise_backend.exception.DuplicateResourceException;
+import com.prepwise.prepwise_backend.exception.ResourceNotFoundException;
 import com.prepwise.prepwise_backend.repository.SubjectRepository;
 
 @Service
+@Transactional
 public class SubjectService {
     @Autowired
     private SubjectRepository subjectRepo;
@@ -18,7 +22,7 @@ public class SubjectService {
     public SubjectResponse addSubject(SubjectRequest request)
     {
        if (subjectRepo.existsBySubjectName(request.getSubjectName())) {
-            throw new RuntimeException("Subject already exists");
+            throw new DuplicateResourceException("Subject already exists");
         }
 
         Subject subject = Subject.builder()
@@ -27,7 +31,6 @@ public class SubjectService {
                 .build();
 
         Subject saved = subjectRepo.save(subject);
-       System.out.println(saved);
         return SubjectResponse.builder()
                 .subjectId(saved.getSubjectId())
                 .subjectName(saved.getSubjectName())
@@ -50,7 +53,7 @@ public class SubjectService {
 
     {
         Subject subject = subjectRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found"));
         return SubjectResponse.builder()
                .subjectId(subject.getSubjectId())
                .subjectName(subject.getSubjectName())
@@ -63,7 +66,7 @@ public class SubjectService {
     {
 
         Subject subject = subjectRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found"));
 
         subject.setSubjectName(request.getSubjectName());
         subject.setDescription(request.getDescription());
@@ -81,7 +84,7 @@ public class SubjectService {
     public void deleteSubject(Long id)
     {
             Subject subject = subjectRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found"));
 
         subjectRepo.delete(subject);
     }

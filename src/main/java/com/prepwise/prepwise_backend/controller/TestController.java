@@ -1,5 +1,7 @@
 package com.prepwise.prepwise_backend.controller;
 
+import jakarta.validation.Valid;
+
 import com.prepwise.prepwise_backend.dto.test.TestGenerateRequest;
 import com.prepwise.prepwise_backend.dto.test.TestResponse;
 import com.prepwise.prepwise_backend.dto.test.TestSubmitRequest;
@@ -16,12 +18,12 @@ public class TestController {
     private TestService testService;
 
     @PostMapping("/generate")
-    public TestResponse generateTest(@RequestBody TestGenerateRequest request) {
+    public TestResponse generateTest(@Valid @RequestBody TestGenerateRequest request) {
         return testService.generateTest(request.getTopicId());
     }
 
     @PostMapping("/{testId}/submit")
-    public TestResponse submitTest(@PathVariable Long testId, @RequestBody TestSubmitRequest request) {
+    public TestResponse submitTest(@PathVariable Long testId, @Valid @RequestBody TestSubmitRequest request) {
         return testService.submitTest(testId, request);
     }
 

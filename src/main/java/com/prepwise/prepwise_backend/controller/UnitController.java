@@ -1,5 +1,7 @@
 package com.prepwise.prepwise_backend.controller;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class UnitController {
     @Autowired
     UnitService Service;
     @PostMapping
-    public UnitResponse addUnit(@RequestBody UnitRequest request) {
+    public UnitResponse addUnit(@Valid @RequestBody UnitRequest request) {
         return Service.addUnit(request);
     }
      @GetMapping
@@ -43,7 +45,7 @@ public class UnitController {
      }
 
      @PutMapping("/{id}")
-     public UnitResponse updateUnit(@PathVariable Long id, @RequestBody UnitRequest request) {
+     public UnitResponse updateUnit(@PathVariable Long id, @Valid @RequestBody UnitRequest request) {
          
          return Service.updateUnit(id, request);
      } 

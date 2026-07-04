@@ -1,5 +1,7 @@
 package com.prepwise.prepwise_backend.controller;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class ChapterController {
     private ChapterService chapterService;
 
     @PostMapping
-    public ChapterResponse addChapter(@RequestBody ChapterRequest request) {
+    public ChapterResponse addChapter(@Valid @RequestBody ChapterRequest request) {
         
         return chapterService.addChapter(request);
     }
@@ -46,7 +48,7 @@ public class ChapterController {
     }
 
     @PutMapping("/{id}")
-    public ChapterResponse updateChapter(@PathVariable Long id, @RequestBody ChapterRequest request) {
+    public ChapterResponse updateChapter(@PathVariable Long id, @Valid @RequestBody ChapterRequest request) {
         return chapterService.updateChapter(id, request);
     }
 }

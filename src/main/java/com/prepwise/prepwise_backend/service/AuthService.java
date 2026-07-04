@@ -3,15 +3,20 @@ package com.prepwise.prepwise_backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.prepwise.prepwise_backend.dto.auth.AuthResponse;
 import com.prepwise.prepwise_backend.dto.auth.LoginRequest;
 import com.prepwise.prepwise_backend.dto.auth.RegisterRequest;
 import com.prepwise.prepwise_backend.entity.Role;
 import com.prepwise.prepwise_backend.entity.User;
+import com.prepwise.prepwise_backend.exception.DuplicateResourceException;
+import com.prepwise.prepwise_backend.exception.InvalidCredentialsException;
 import com.prepwise.prepwise_backend.repository.UserRepository;
 import com.prepwise.prepwise_backend.security.JwtService;
+
 @Service
+@Transactional
 public class AuthService {
 
     @Autowired
@@ -26,13 +31,13 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
 
     if (userRepository.existsByUsername(request.getUsername())) {
-        throw new RuntimeException("Username already exists");
+        throw new DuplicateResourceException("Username already exists");
     }
 
     if (userRepository.existsByEmail(request.getEmail())) {
-        throw new RuntimeException("Email already exists");
+        throw new DuplicateResourceException("Email already exists");
     }
-    System.out.print(request);
+
     User user = User.builder()
             .username(request.getUsername())
             .fullName(request.getFullName())
@@ -58,16 +63,15 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
 
-      
-
+    // Use the same message for "unknown email" and "wrong password" to avoid user enumeration.
     User user = userRepository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new RuntimeException("User not found"));
-    System.out.println(user.getFullName()+" "+request.getEmail());
-    
+            .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
     if (!encoder.matches(request.getPassword(), user.getPassword())) {
-        throw new RuntimeException("Invalid password");
+        throw new InvalidCredentialsException("Invalid email or password");
     }
-String jwtToken = jwtService.generateToken(user.getUsername(),user.getRole().name());
+
+    String jwtToken = jwtService.generateToken(user.getUsername(),user.getRole().name());
     return AuthResponse.builder()
             .message("User logged in successfully")
             .username(user.getUsername())

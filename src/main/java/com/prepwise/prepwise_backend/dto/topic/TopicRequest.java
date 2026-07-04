@@ -12,9 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class TopicRequest {
-    private String topic_name;
-    private String desciption;
-    private Integer displayorder;
+    private String topicName;
+    private String description;
+    private Integer displayOrder;
     private Integer weightage;
     private Long chapterId;
 }

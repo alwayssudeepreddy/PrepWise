@@ -9,19 +9,28 @@ import com.prepwise.prepwise_backend.entity.Test;
 import com.prepwise.prepwise_backend.entity.Topic;
 import com.prepwise.prepwise_backend.entity.TopicProgress;
 import com.prepwise.prepwise_backend.entity.User;
+import com.prepwise.prepwise_backend.exception.BadRequestException;
+import com.prepwise.prepwise_backend.exception.ForbiddenActionException;
+import com.prepwise.prepwise_backend.exception.ResourceNotFoundException;
 import com.prepwise.prepwise_backend.repository.QuestionRepository;
 import com.prepwise.prepwise_backend.repository.TestRepository;
 import com.prepwise.prepwise_backend.repository.TopicProgressRepository;
 import com.prepwise.prepwise_backend.repository.TopicRepository;
 import com.prepwise.prepwise_backend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@Transactional
 public class TestService {
+
+    private static final Logger log = LoggerFactory.getLogger(TestService.class);
 
     @Autowired
     private TestRepository testRepo;
@@ -43,13 +52,12 @@ public class TestService {
 
     public TestResponse generateTest(Long topicId) {
 
-         System.out.println("CALLED HERE");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Topic topic = topicRepo.findById(topicId)
-                .orElseThrow(() -> new RuntimeException("Topic not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
 
         // Get user's progress across previous topics
         List<TopicProgress> allProgress = topicProgressRepo.findByUserUserId(user.getUserId());
@@ -76,20 +84,20 @@ public class TestService {
         try {
             recommendedIds = modelClientService.getRecommendedQuestions(topicId, solvedQuestions, wrongQuestions);
         } catch (Exception e) {
-            System.err.println("[TestService] Error querying recommendation model: " + e.getMessage());
+            log.error("Error querying recommendation model", e);
         }
 
         List<Question> testQuestions;
         if (recommendedIds == null || recommendedIds.isEmpty()) {
-            System.out.println("[TestService] ML recommender returned no recommendations. Falling back to fetching questions directly from DB for topic " + topicId);
+            log.info("ML recommender returned no recommendations; falling back to question bank for topic {}", topicId);
             testQuestions = questionRepo.findByTopicTopicId(topicId);
             if (testQuestions.isEmpty()) {
-                throw new RuntimeException("No questions found for this topic (and ML model returned no recommendations)");
+                throw new ResourceNotFoundException("No questions found for this topic (and ML model returned no recommendations)");
             }
         } else {
             testQuestions = questionRepo.findAllById(recommendedIds);
             if (testQuestions.isEmpty()) {
-                throw new RuntimeException("No questions found for recommended IDs");
+                throw new ResourceNotFoundException("No questions found for recommended IDs");
             }
         }
 
@@ -109,18 +117,18 @@ public class TestService {
     public TestResponse submitTest(Long testId, TestSubmitRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Test test = testRepo.findById(testId)
-                .orElseThrow(() -> new RuntimeException("Test not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
 
         if (test.getCompleted()) {
-            throw new RuntimeException("Test already submitted");
+            throw new BadRequestException("Test already submitted");
         }
 
         // Verify the user owns the test
         if (!test.getUser().getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("Unauthorized submission");
+            throw new ForbiddenActionException("You are not allowed to submit this test");
         }
 
         TopicProgress progress = topicProgressRepo.findByUserUserIdAndTopicTopicId(user.getUserId(), test.getTopic().getTopicId())
@@ -163,10 +171,10 @@ public class TestService {
     public TopicProgressResponse getTopicProgress(Long topicId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Topic topic = topicRepo.findById(topicId)
-                .orElseThrow(() -> new RuntimeException("Topic not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
 
         TopicProgress progress = topicProgressRepo.findByUserUserIdAndTopicTopicId(user.getUserId(), topicId)
                 .orElse(null);

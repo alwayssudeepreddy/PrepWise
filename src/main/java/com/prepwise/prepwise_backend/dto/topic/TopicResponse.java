@@ -13,9 +13,9 @@ import lombok.Setter;
 @Builder
 public class TopicResponse {
     private Long topicId;
-    private String topic_name;
-    private String desciption;
-    private Integer displayorder;
+    private String topicName;
+    private String description;
+    private Integer displayOrder;
     private Integer weightage;
     private Long chapterId;
     private String chapterName;

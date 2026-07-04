@@ -1,5 +1,7 @@
 package com.prepwise.prepwise_backend.controller;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +36,13 @@ public class SubjectController {
     }
 
     @PostMapping
-    public SubjectResponse addSubject(@RequestBody SubjectRequest request) {
+    public SubjectResponse addSubject(@Valid @RequestBody SubjectRequest request) {
 
         return subjectService.addSubject(request);
     }
 
     @PutMapping("/{id}")
-    public SubjectResponse updateSubject(@PathVariable Long id, @RequestBody SubjectRequest request) {
+    public SubjectResponse updateSubject(@PathVariable Long id, @Valid @RequestBody SubjectRequest request) {
         return subjectService.updateSubject(id, request);
     }
 

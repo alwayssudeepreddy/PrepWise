@@ -54,7 +54,7 @@ public class Chapter {
     
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
-    private User user;;
+    private User user;
 
     
 

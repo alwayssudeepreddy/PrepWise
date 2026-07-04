@@ -1,5 +1,7 @@
 package com.prepwise.prepwise_backend.controller;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,7 @@ public class TopicController {
     private TopicService topicService;
 
     @PostMapping
-    public TopicResponse addTopic(@RequestBody TopicRequest request) {
-        System.out.println(request);
+    public TopicResponse addTopic(@Valid @RequestBody TopicRequest request) {
         return topicService.addTopic(request);
     }
 
@@ -46,7 +47,7 @@ public class TopicController {
     }
 
     @PutMapping("/{id}")
-    public TopicResponse updateTopic(@PathVariable Long id, @RequestBody TopicRequest request) {
+    public TopicResponse updateTopic(@PathVariable Long id, @Valid @RequestBody TopicRequest request) {
         return topicService.updateTopic(id, request);
     }
 }

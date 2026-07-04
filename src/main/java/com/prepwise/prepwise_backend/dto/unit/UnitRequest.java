@@ -17,7 +17,5 @@ public class UnitRequest {
 
     private String description;
 
-    private Integer estimatedQuestions;
-
     private Long subjectId;
 }

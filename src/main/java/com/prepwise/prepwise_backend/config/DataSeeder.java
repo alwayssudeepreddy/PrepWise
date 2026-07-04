@@ -2,6 +2,8 @@ package com.prepwise.prepwise_backend.config;
 
 import com.prepwise.prepwise_backend.entity.*;
 import com.prepwise.prepwise_backend.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -37,7 +41,7 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0) {
-            System.out.println("[DataSeeder] No users found. Seeding default database data...");
+            log.info("No users found. Seeding default database data...");
 
             // 1. Seed Users
             User admin = User.builder()
@@ -58,7 +62,7 @@ public class DataSeeder implements CommandLineRunner {
                     .build();
             student = userRepository.save(student);
 
-            System.out.println("[DataSeeder] Seeded default users: admin/admin123 and student/student123");
+            log.info("Seeded default users: admin/admin123 and student/student123");
 
             // 2. Seed Subject
             Subject subject = Subject.builder()
@@ -91,15 +95,15 @@ public class DataSeeder implements CommandLineRunner {
             // 5. Seed Topic
             Topic topic = Topic.builder()
                     .topicName("Limits of Functions")
-                    .desciption("Evaluation of limits, standard limit theorems, and indeterminate forms")
-                    .displayorder(1)
+                    .description("Evaluation of limits, standard limit theorems, and indeterminate forms")
+                    .displayOrder(1)
                     .weightage(5)
                     .chapter(chapter)
                     .user(admin)
                     .build();
             topic = topicRepository.save(topic);
 
-            System.out.println("[DataSeeder] Seeded subject, unit, chapter, and topic. Topic ID: " + topic.getTopicId());
+            log.info("Seeded subject, unit, chapter, and topic. Topic ID: {}", topic.getTopicId());
 
             // 6. Seed Questions
             List<Question> questions = new ArrayList<>();
@@ -185,9 +189,9 @@ public class DataSeeder implements CommandLineRunner {
                     .build());
 
             questionRepository.saveAll(questions);
-            System.out.println("[DataSeeder] Seeded " + questions.size() + " default questions for topic 'Limits of Functions'.");
+            log.info("Seeded {} default questions for topic 'Limits of Functions'.", questions.size());
         } else {
-            System.out.println("[DataSeeder] Database already populated. Skipping seeder.");
+            log.info("Database already populated. Skipping seeder.");
         }
     }
 }

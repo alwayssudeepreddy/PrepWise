@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.prepwise.prepwise_backend.exception.ResourceNotFoundException;
 
 import com.prepwise.prepwise_backend.dto.question.QuestionRequest;
 import com.prepwise.prepwise_backend.dto.question.QuestionResponse;
@@ -16,6 +18,7 @@ import com.prepwise.prepwise_backend.repository.TopicRepository;
 import com.prepwise.prepwise_backend.repository.UserRepository;
 
 @Service
+@Transactional
 public class QuestionService {
 
     @Autowired
@@ -29,11 +32,11 @@ public class QuestionService {
 
     public QuestionResponse addQuestion(QuestionRequest request) {
         Topic topic = topicRepo.findById(request.getTopicId())
-                .orElseThrow(() -> new RuntimeException("Topic not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Question question = Question.builder()
                 .topic(topic)
@@ -64,7 +67,7 @@ public class QuestionService {
 
     public QuestionResponse getQuestionById(Long id) {
         Question question = questionRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
         return mapToResponse(question);
     }
 
@@ -77,10 +80,10 @@ public class QuestionService {
 
     public QuestionResponse updateQuestion(Long id, QuestionRequest request) {
         Question question = questionRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
 
         Topic topic = topicRepo.findById(request.getTopicId())
-                .orElseThrow(() -> new RuntimeException("Topic not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
 
         question.setTopic(topic);
         question.setQuestionText(request.getQuestionText());
@@ -101,7 +104,7 @@ public class QuestionService {
 
     public void deleteQuestion(Long id) {
         Question question = questionRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
         questionRepo.delete(question);
     }
 

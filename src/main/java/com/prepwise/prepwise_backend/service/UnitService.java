@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.prepwise.prepwise_backend.exception.DuplicateResourceException;
+import com.prepwise.prepwise_backend.exception.ResourceNotFoundException;
 
 import com.prepwise.prepwise_backend.dto.unit.UnitRequest;
 import com.prepwise.prepwise_backend.dto.unit.UnitResponse;
@@ -16,6 +19,7 @@ import com.prepwise.prepwise_backend.repository.UnitRepository;
 import com.prepwise.prepwise_backend.repository.UserRepository;
 
 @Service
+@Transactional
 public class UnitService {
 
     @Autowired
@@ -31,15 +35,15 @@ public class UnitService {
     public UnitResponse addUnit(UnitRequest request) {
 
         if (unitRepo.existsByUnitName(request.getUnitName())) {
-            throw new RuntimeException("Unit already exists");
+            throw new DuplicateResourceException("Unit already exists");
         }
 
         Subject subject = subjectRepo.findById(request.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found"));
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Unit unit = Unit.builder()
                 .unitName(request.getUnitName())
@@ -65,7 +69,7 @@ public class UnitService {
     public UnitResponse getUnitById(Long id) {
 
         Unit unit = unitRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
 
         return mapToResponse(unit);
     }
@@ -73,10 +77,10 @@ public class UnitService {
     public UnitResponse updateUnit(Long id, UnitRequest request) {
 
         Unit unit = unitRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
 
         Subject subject = subjectRepo.findById(request.getSubjectId())
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found"));
 
         unit.setUnitName(request.getUnitName());
         unit.setDescription(request.getDescription());
@@ -91,7 +95,7 @@ public class UnitService {
     public void deleteUnit(Long id) {
 
         Unit unit = unitRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
 
         unitRepo.delete(unit);
     }

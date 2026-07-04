@@ -1,7 +1,6 @@
 package com.prepwise.prepwise_backend.repository;
 
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +15,5 @@ public interface UnitRepository extends JpaRepository<Unit, Long>{
 
 boolean existsByUnitName(String unitName);
 
-List<Unit> findBySubjectSubjectId(Long subjectId);
     
 }

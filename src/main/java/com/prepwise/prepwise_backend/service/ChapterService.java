@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.prepwise.prepwise_backend.exception.DuplicateResourceException;
+import com.prepwise.prepwise_backend.exception.ResourceNotFoundException;
 
 import com.prepwise.prepwise_backend.dto.chapter.ChapterRequest;
 import com.prepwise.prepwise_backend.dto.chapter.ChapterResponse;
@@ -16,6 +19,7 @@ import com.prepwise.prepwise_backend.repository.UnitRepository;
 import com.prepwise.prepwise_backend.repository.UserRepository;
 
 @Service
+@Transactional
 public class ChapterService {
 
     @Autowired
@@ -30,15 +34,15 @@ public class ChapterService {
     public ChapterResponse addChapter(ChapterRequest request) {
 
         if (chapterRepo.existsByChapterName(request.getChapterName())) {
-            throw new RuntimeException("Chapter already exists");
+            throw new DuplicateResourceException("Chapter already exists");
         }
 
         Unit unit = unitRepo.findById(request.getUnitId())
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Chapter chapter = Chapter.builder()
                 .chapterName(request.getChapterName())
@@ -64,16 +68,16 @@ public class ChapterService {
 
     public ChapterResponse getChapterById(Long id) {
         Chapter chapter = chapterRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chapter not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
         return mapToResponse(chapter);
     }
 
     public ChapterResponse updateChapter(Long id, ChapterRequest request) {
         Chapter chapter = chapterRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chapter not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
 
         Unit unit = unitRepo.findById(request.getUnitId())
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
 
         chapter.setChapterName(request.getChapterName());
         chapter.setDescription(request.getDescription());
@@ -88,7 +92,7 @@ public class ChapterService {
 
     public void deleteChapter(Long id) {
         Chapter chapter = chapterRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chapter not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
         chapterRepo.delete(chapter);
     }
 
