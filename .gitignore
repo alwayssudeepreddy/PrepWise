@@ -40,3 +40,15 @@ application-prod.properties
 # Temporary Files
 *.tmp
 *.swp
+
+# Frontend (Node)
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
